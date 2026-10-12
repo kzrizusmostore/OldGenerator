@@ -1,5 +1,5 @@
 /* Service worker: Pembuat Akun. Naikkan nomor V setiap kali file diganti. */
-const V = 'pembuat-akun-v1';
+const V = 'pembuat-akun-v5';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
