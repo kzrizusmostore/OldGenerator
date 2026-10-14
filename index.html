@@ -376,7 +376,7 @@ a.nv{text-decoration:none}
       </div>
       <div class="fld">
         <span class="fi"><svg class="ic"><use href="#i-key"/></svg></span>
-        <div><label for="p">Password</label><input id="p" class="mono" maxlength="40" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="password akun"></div>
+        <div><label for="p">Password</label><input id="p" class="mono" readonly maxlength="40" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="sama dengan username"></div>
         <button id="cw" class="lk" type="button" aria-label="Salin password"><svg class="ic cc"><use href="#i-copy"/></svg><svg class="ic ck"><use href="#i-check"/></svg></button>
       </div>
       <div class="fld">
@@ -468,11 +468,11 @@ a.nv{text-decoration:none}
   <div class="dh"><h2 id="skdt">Stok akun</h2><button class="ib" type="button" data-close aria-label="Tutup"><svg class="ic"><use href="#i-x"/></svg></button></div>
   <div class="sk-add">
     <input id="skU" class="txt mono" maxlength="40" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="Username" aria-label="Username">
-    <input id="skP" class="txt mono" maxlength="40" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="Password" aria-label="Password">
+    <input id="skP" class="txt mono" readonly maxlength="40" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="Sama dengan username" aria-label="Password">
     <input id="skK" class="txt mono" maxlength="120" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Key (opsional)" aria-label="Key">
     <div class="two" style="margin-top:0"><button id="skGen" class="btn gen" type="button"><svg class="ic"><use href="#i-dice"/></svg>Generate</button><button id="skAdd" class="btn main" type="button">Simpan ke stok</button></div>
   </div>
-  <div id="skt" class="seg k3" role="radiogroup" aria-label="Filter stok" style="margin-top:14px"></div>
+  <div id="skt" class="seg k2" role="radiogroup" aria-label="Filter stok" style="margin-top:14px"></div>
   <input id="skq" class="txt" type="search" placeholder="Cari username atau key" aria-label="Cari stok" style="margin-top:8px">
   <ul id="skl" class="skl"></ul>
   <p class="cnt" style="margin:0 2px 10px">Centang akun yang sudah dipakai: datanya dikunci dan tidak bisa dipakai lagi. Stok tersimpan hanya di perangkat ini, cadangkan lewat Ekspor CSV.</p>
@@ -987,7 +987,7 @@ function copy(s,ok,btn){
 }
 
 /* ===== Data, validasi, pesan ===== */
-function data(){return{u:$('u').value.trim(),p:$('p').value.trim(),t:S.t,n:S.n.trim(),b:$('b').value.trim(),key:$('ky').value.trim()}}
+function data(){return{u:$('u').value.trim(),p:$('u').value.trim(),t:S.t,n:S.n.trim(),b:$('b').value.trim(),key:$('ky').value.trim()}}
 function waNum(s){var d=s.replace(/\D/g,'');if(d.charAt(0)==='0')d='62'+d.slice(1);else if(d.charAt(0)==='8')d='62'+d;return d}
 function check(show){
   var bad=null;
@@ -1006,7 +1006,7 @@ function fill(t,d){
   return bold(t.replace(/\{(\w+)\}/g,function(m,k){return Object.prototype.hasOwnProperty.call(V,k)?V[k]:m}).replace(/ ,/g,',').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim());
 }
 function msg(){$('m').value=fill(MSG[S.mt][1],data())}
-function sched(){cancelAnimationFrame(raf);raf=requestAnimationFrame(draw);if(typeof tdnSync==='function')tdnSync()}
+function sched(){$('p').value=$('u').value.trim();cancelAnimationFrame(raf);raf=requestAnimationFrame(draw);if(typeof tdnSync==='function')tdnSync()}
 function draw(){
   var d=data();
   check(false);
@@ -1027,7 +1027,7 @@ function share(){
     saveAs(b,f.name);rec(d);
   });
 }
-function copyBoth(){if(need())copy('Username : '+$('u').value.trim()+'\nPassword : '+$('p').value.trim(),'Username dan password disalin.')}
+function copyBoth(){if(need())copy('Username : '+$('u').value.trim()+'\nPassword : '+$('u').value.trim(),'Username dan password disalin.')}
 function reset(){
   var s={u:$('u').value,p:$('p').value,b:$('b').value,k:$('ky').value,a:AID};
   $('u').value='';$('p').value='';$('b').value='';$('ky').value='';AID=null;sched();$('u').focus();
@@ -1153,7 +1153,7 @@ function hist(){
     b.onclick=function(){
       $('u').value=e.u;$('b').value=e.b||'';$('p').value='';
       if(TPL.some(function(y){return y[0]===e.tpl}))S.tpl=e.tpl;
-      syncT();save();sched();$('hd').close();$('p').focus();
+      syncT();save();sched();$('hd').close();$('u').focus();
     };
     x.onclick=function(){HI=HI.filter(function(y){return y!==e});save();hist()};
     l.appendChild(h('li',{},[b,x]));
@@ -1176,11 +1176,11 @@ syncP();
 function prv(){var d=data();[].forEach.call($('mts').children,function(b){var t=b.querySelector('small');if(!t){t=h('small',{});b.appendChild(t)}t.textContent=fill(MSG[b.dataset.v][1],d).replace(/\s+/g,' ')})}
 syncT();syncM();prv();hist();draw();setInterval(sched,30000);
 
-$('u').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('p').focus()}});
-$('u').addEventListener('input',tdnSync);$('tdn').onclick=tdnClick;
+$('u').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();download()}});
+$('u').addEventListener('input',function(){$('p').value=$('u').value.trim();tdnSync()});$('tdn').onclick=tdnClick;
 $('p').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();download()}});
 $('cu').onclick=function(){var v=$('u').value.trim();if(v&&!lockedEntry())copy(v,'Username disalin.',this);else need()};
-$('cw').onclick=function(){var v=$('p').value.trim();if(v&&!lockedEntry())copy(v,'Password disalin.',this);else need()};
+$('cw').onclick=function(){var v=$('u').value.trim();if(v&&!lockedEntry())copy(v,'Password disalin.',this);else need()};
 $('cky').onclick=function(){var v=$('ky').value.trim();if(!v){toast('Key masih kosong.');return}if(lockedEntry()){toast('Akun ini sudah terpakai dan terkunci.');return}copy(v,'Key disalin.',this)};
 $('rs').onclick=reset;$('dl').onclick=download;$('xh').onclick=xoAll;
 
@@ -1242,7 +1242,7 @@ ctFill();
 
 /* ===== Stok akun: catat username, password, key (diketik sendiri) ===== */
 var SKEY='zo22:stok';
-function skLoad(){try{var o=JSON.parse(localStorage.getItem(SKEY)||'null');if(o&&o.v===1&&Array.isArray(o.l))SK=o.l.filter(function(e){return e&&typeof e.id==='string'&&typeof e.u==='string'&&e.u}).slice(0,500).map(function(e){var us=e.used?1:0;return{id:e.id,u:e.u.slice(0,40),p:us?'':String(e.p||'').slice(0,40),k:us?'':String(e.k||'').slice(0,120),ts:+e.ts||0,used:us,ut:+e.ut||0}})}catch(x){}}
+function skLoad(){try{var o=JSON.parse(localStorage.getItem(SKEY)||'null');if(o&&o.v===1&&Array.isArray(o.l))SK=o.l.filter(function(e){return e&&typeof e.id==='string'&&typeof e.u==='string'&&e.u}).slice(0,500).map(function(e){var us=e.used?1:0;return{id:e.id,u:e.u.slice(0,40),p:us?'':e.u.slice(0,40),k:us?'':String(e.k||'').slice(0,120),ts:+e.ts||0,used:us,ut:+e.ut||0}})}catch(x){}}
 function skSave(){try{localStorage.setItem(SKEY,JSON.stringify({v:1,l:SK}))}catch(x){toast('Stok gagal disimpan. Penyimpanan browser penuh atau diblokir.')}}
 function skFind(id){for(var i=0;i<SK.length;i++)if(SK[i].id===id)return SK[i];return null}
 function lockedEntry(){var u=$('u').value.trim().toLowerCase();if(!u)return null;for(var i=0;i<SK.length;i++)if(SK[i].used&&SK[i].u.toLowerCase()===u)return SK[i];return null}
@@ -1252,7 +1252,7 @@ function lockUI(){
   n.hidden=!lk;
   if(lk){n.textContent='Akun "'+lk.u+'" sudah terpakai. Poster, HTML, dan pesan dikunci.';$('u').closest('.fld').classList.add('bad')}
 }
-function syncActive(){if(!AID)return;var e=skFind(AID);if(!e||e.used||e.u!==$('u').value.trim()||e.p!==$('p').value.trim())AID=null}
+function syncActive(){if(!AID)return;var e=skFind(AID);if(!e||e.used||e.u!==$('u').value.trim())AID=null}
 var DLD={};/* unduhan per username: i=PNG, h=HTML. Tombol tandai baru muncul setelah keduanya */
 function dlKey(){return $('u').value.trim().toLowerCase()}
 function doneToast(m,a,k){
@@ -1276,13 +1276,13 @@ function tdnClick(){
   if(e&&e.used){tdnSync();return}
   ask('Tandai "'+u+'" sebagai terpakai? Password dan key akan dihapus, dan akun ini tidak bisa dipakai lagi untuk poster, HTML, atau pesan.','Tandai terpakai').then(function(y){
     if(!y)return;
-    if(!e){e={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),u:u,p:$('p').value.trim(),k:$('ky').value.trim(),ts:Date.now(),used:0,ut:0};SK.unshift(e);SK=SK.slice(0,500);skSave()}
+    if(!e){e={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),u:u,p:u,k:$('ky').value.trim(),ts:Date.now(),used:0,ut:0};SK.unshift(e);SK=SK.slice(0,500);skSave()}
     skUsed(e.id,true);delete DLD[l];lockUI();tdnSync();skBadge();
   });
 }
 function skBadge(){var n=SK.filter(function(e){return!e.used}).length,b=$('skb');b.hidden=!n;b.textContent=n>99?'99+':n;$('sk').setAttribute('aria-label','Stok akun, '+n+' tersedia')}
 function skWhen(t){return t?new Date(t).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):''}
-function skForm(e){$('u').value=e.u;$('p').value=e.p;$('ky').value=e.k||'';AID=e.id;sched()}
+function skForm(e){$('u').value=e.u;$('p').value=e.u;$('ky').value=e.k||'';AID=e.id;sched()}
 function skUsed(id,go){
   var e=skFind(id);if(!e||e.used)return;
   function doit(){
@@ -1302,9 +1302,9 @@ function skRender(){
   SK.forEach(function(e){if(e.used)us++;else av++});
   if(tb.length===3){tb[0].querySelector('span').textContent='Tersedia ('+av+')';tb[1].querySelector('span').textContent='Terpakai ('+us+')';tb[2].querySelector('span').textContent='Semua ('+SK.length+')'}
   skBadge();
-  a=SK.filter(function(e){return(SKF==='s'||(SKF==='u')===!!e.used)&&(!q||(e.u+' '+(e.k||'')).toLowerCase().indexOf(q)>=0)});
+  a=SK.filter(function(e){return(SKF==='u')===!!e.used&&(!q||(e.u+' '+(e.k||'')).toLowerCase().indexOf(q)>=0)});
   l.textContent='';
-  if(!a.length){l.appendChild(h('li',{'class':'sk-e',text:q?'Tidak ada yang cocok.':(SKF==='u'?'Belum ada akun terpakai.':SKF==='s'?'Stok masih kosong.':'Tidak ada akun tersedia.')}));return}
+  if(!a.length){l.appendChild(h('li',{'class':'sk-e',text:q?'Tidak ada yang cocok.':(SKF==='u'?'Belum ada akun terpakai.':'Tidak ada akun tersedia.')}));return}
   a.forEach(function(e){
     var cb=h('input',{type:'checkbox','aria-label':'Tandai '+e.u+' sebagai terpakai'}),
         meta=e.used?'Terpakai \u00b7 '+skWhen(e.ut):(e.k?'Key: '+e.k+' \u00b7 ':'')+'Disimpan '+skWhen(e.ts),
@@ -1329,8 +1329,8 @@ function skRender(){
   });
 }
 function skAdd(){
-  var u=$('skU').value.trim(),p=$('skP').value.trim(),k=$('skK').value.trim(),dup;
-  if(!u||!p){toast('Isi username dan password dulu.');(u?$('skP'):$('skU')).focus();return}
+  var u=$('skU').value.trim(),p=u,k=$('skK').value.trim(),dup;
+  if(!u){toast('Isi username dulu.');$('skU').focus();return}
   dup=SK.filter(function(e){return e.u.toLowerCase()===u.toLowerCase()})[0];
   if(dup){toast(dup.used?'Username ini sudah pernah terpakai.':'Username ini sudah ada di stok.');$('skU').focus();return}
   SK.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),u:u,p:p,k:k,ts:Date.now(),used:0,ut:0});
@@ -1338,12 +1338,13 @@ function skAdd(){
   $('skU').value='';$('skP').value='';$('skK').value='';$('skU').focus();
   SKF='a';syncSK();skRender();toast('Tersimpan ke stok.');
 }
-skLoad();
-var syncSK=radios($('skt'),[['a','Tersedia'],['u','Terpakai'],['s','Semua']],function(){return SKF},function(v){SKF=v;syncSK();skRender()},'opt');
+skLoad();skSave();
+var syncSK=radios($('skt'),[['a','Tersedia'],['u','Terpakai']],function(){return SKF},function(v){SKF=v;syncSK();skRender()},'opt');
 syncSK();
 $('sk').onclick=function(){skRender();$('skd').showModal()};
 $('skAdd').onclick=skAdd;
-$('skU').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('skP').focus()}});
+$('skU').addEventListener('input',function(){$('skP').value=$('skU').value.trim()});
+$('skU').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('skK').focus()}});
 $('skP').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('skK').focus()}});
 $('skK').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();skAdd()}});
 $('skq').addEventListener('input',skRender);
